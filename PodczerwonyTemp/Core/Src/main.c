@@ -134,15 +134,17 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  if(HAL_I2C_Mem_Read(&hi2c1,(0x5A)<<1,0x06,1,tmp,2,10))
+	  if(HAL_I2C_Mem_Read(&hi2c1,(0x5A)<<1,0x06,1,tmp,2,10)==HAL_OK)
 		{
 		ambient_tmp = (uint16_t)tmp[1]<<8 | tmp[0];
-		ambient_tmp_cel = ambient_tmp - 273.15;
+		ambient_tmp_cel = (float)ambient_tmp * 0.02;
+		ambient_tmp_cel = ambient_tmp_cel - 273.15;
 		}
-	  if(HAL_I2C_Mem_Read(&hi2c1,(0x5A)<<1,0x07,1,tmp,2,10))
+	  if(HAL_I2C_Mem_Read(&hi2c1,(0x5A)<<1,0x07,1,tmp,2,10)==HAL_OK)
 		{
-		obj_tmp = (uint16_t)tmp[1]<<8 | tmp[0];
-		obj_tmp_cel = ambient_tmp - 273.15;
+		  obj_tmp = (uint16_t)tmp[1]<<8 | tmp[0];
+		  obj_tmp_cel = (float)obj_tmp * 0.02;
+		  obj_tmp_cel = obj_tmp_cel - 273.15;
 		}
 	  len = sprintf(buf, "Ambient: %.2f\n,Object:%.2f \n\r", ambient_tmp_cel,obj_tmp_cel);
 	  HAL_UART_Transmit(&huart3, (uint8_t*)buf, len, 10);
